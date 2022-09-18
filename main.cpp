@@ -7,17 +7,23 @@
 
 int main(int argc, char *argv[]) {
     
-    sloc::runOpts runningOpts {};
-    std::vector<sloc::fileDescrip> files;
-
     if (argc < 2) {
         std::cout << "Usage: " << argv[0] << " <dirname>\n";
         return EXIT_FAILURE;
     }
+    
+    std::vector<sloc::fileDescrip> files;
 
-    runningOpts = sloc::getRunOpts(argc, argv);
+    sloc::runOpts runningOpts = sloc::getRunOpts(argc, argv);
 
-    std::cout << runningOpts.recursive;
+    if (runningOpts.recursive) {
+        std::cout << "RECURSIVE\n";
+    }
+
+    if (!runningOpts.ascendOrder) {
+        std::cout << "descending order\n";
+    }
+    
 
     //files = getFiles(argv[1], runningOptions);
 

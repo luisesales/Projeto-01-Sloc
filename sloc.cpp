@@ -13,17 +13,17 @@ namespace sloc {
 
         for (int i=2; i < argc; i++) {
                 
-            if (strcmp(argv[i], "-r")) {
+            if (strcmp(argv[i], "-r") == 0) {
                 options.recursive = true;
             } 
 
-            if (strcmp(argv[i], "-s") || strcmp(argv[i], "-S")) {
+            if ((strcmp(argv[i], "-s") == 0) || (strcmp(argv[i], "-S")) == 0) {
 
-                if (strcmp(argv[i], "-S")) {
+                if (strcmp(argv[i], "-S") == 0) {
                     options.ascendOrder = false;
                 }
 
-                if (i + 1 <= argc) {
+                if (i + 1 < argc) {
 
                     switch (*(argv[i + 1])) {
                     case 'f':
