@@ -2,6 +2,7 @@
 #include <vector>
 #include "sloc.hpp"
 #include <cstring>
+#include <bits/stdc++.h>
 
 namespace sloc {
 
@@ -58,6 +59,45 @@ std::vector<fileDescrip> getFiles (std::string directory, runOpts is_rec) {
 }
 */
 
+bool fName_sorter(fileDescrip const& F1, fileDescrip const& F2) {
+    if(F1.fileName != F2.fileName){
+        return F1.fileName < F2.fileName;
+    }
+}
+bool fComments_sorter(fileDescrip const& F1, fileDescrip const& F2){
+    return F1.comments < F2.comments;
+}
+bool fBLines_sorter(fileDescrip const& F1, fileDescrip const& F2){
+    return F1.blank < F2.blank;
+}
+bool fType_sorter(fileDescrip const& F1, fileDescrip const& F2){
+    return F1.type < F2.type;
+}
+
+
+std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts order){
+    switch(orderBy){
+        case apparition:
+        break;
+        case fileName:
+        std::sort(files.begin(), files.end(), fName_sorter);
+        break;
+        case fileType:
+        std::sort(files.begin(), files.end(), fType_sorter);
+        break;
+        case comments:
+        std::sort(files.begin(), files.end(), fComments_sorter);
+        break;
+        case blankLines:
+        std::sort(files.begin(), files.end(), fBLines_sorter);
+        break;
+        case sloc:
+        break;
+        case all:
+        break;
+    }
+    return files;
+}
 
 }
 
