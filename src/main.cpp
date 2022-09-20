@@ -14,18 +14,10 @@ int main(int argc, char *argv[]) {
     
     std::vector<sloc::fileDescrip> files;
 
-    sloc::runOpts runningOpts = sloc::getRunOpts(argc, argv);
+    sloc::runOpts runningOpts = sloc::getRunOpts(argc, argv);    
 
-    if (runningOpts.recursive) {
-        std::cout << "RECURSIVE\n";
-    }
-
-    if (!runningOpts.ascendOrder) {
-        std::cout << "descending order\n";
-    }
-    
-
-    //files = getFiles(argv[1], runningOptions);
+    std::string path = "";
+    sloc::getFiles(files, argv[1], runningOpts, path);
 
     //files = countFiles(files);
 

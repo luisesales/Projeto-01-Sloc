@@ -86,5 +86,6 @@
         "stop_token": "cpp",
         "syncstream": "cpp",
         "variant": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

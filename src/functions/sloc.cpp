@@ -49,70 +49,98 @@ namespace sloc {
     } 
 
 
-/*
-std::vector<fileDescrip> getFiles (std::string directory, runOpts is_rec) {
+bool isDirectory (std::string name) {
+    int size = name.length();
+    auto it = name.rbegin();
+    if (size > 2) {
+        if (*(it + 1) == '.' or *(it + 2) == '.' or *(it + 3) == '.') {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+fileExt getType(std::string fileName) {
+    int size = fileName.length();
+    auto it = fileName.rbegin();
+    if (size > 2) {
+        if (*(it + 1) == '.') {
+            if (*it == 'h') {
+                return H;
+            } else if (*it == 'c') {
+                return C;
+            }
+        }
+        else if (*(it + 3) == '.') {
+            if (*it == 'p' and *(it + 1) == 'p' and *(it + 2) == 'c') {
+                return CPP;
+            } else if (*it == 'p' and *(it + 1) == 'p' and *(it + 2) == 'h') {
+                return HPP;
+            }
+        }
+    }
+
+    return notSupported;
+}
+
+std::string convertToString(char* a, int size)
+{
+    int i;
+    std::string s = "";
+    for (i = 0; i < size; i++) {
+        if (a[i] == '\n') {
+            break;
+        }
+        s = s + a[i];
+    }
+    return s;
+}
+
+void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts is_rec, std::string pathSoFar) {
 
     struct dirent *pDirent;
     DIR *pDir;
 
-    
-
-    // Ensure correct argument count.
-    if (argc != 2) {
-        std::cout << "Usage: " << argv[0] << " <dirname>\n";
-        return EXIT_FAILURE;
-    }
-
     // Ensure we can open directory.
-    pDir = opendir(argv[1]);
+    pDir = opendir(directory);
     if (pDir == NULL) {
-        std::cout << "Cannot open directory '" << argv[1] << "'\n";
-        return 1;
+        std::cout << "Cannot open directory '" << directory << "'\n";
     }
 
     // Process each entry.
     while ((pDirent = readdir(pDir)) != NULL) {
-        
-        std::cout << pDirent->d_name << std::endl;
 
-        std::fstream strm;
-        
-        strm.open(pDirent->d_name, std::ios_base::in);
+        if (isDirectory(pDirent->d_name) && is_rec.recursive) {
 
-        if (strm.is_open()) {            
-            
-            while (!strm.eof()) {
-                char line[100];
-                strm.getline(line, 100, '\n');
+            std::string name = convertToString((pDirent->d_name), 256);
 
-                std::cout << line << std::endl;
-
-            }
-
+            getFiles(filesVector, (pDirent->d_name), is_rec, (pathSoFar + "/" + name));
         }
-        
 
-        
-        std::cout << "[" << pDirent->d_name << "]\n" ;
-        std::cout << "\t- <" << pDirent->d_ino << ">\n" ;
-        std::cout << "\t- <" << pDirent->d_off << ">\n" ;
-        std::cout << "\t- <" << pDirent->d_reclen << ">\n" ;
-        std::cout << "\t- <" << pDirent->d_type << ">\n" ; 
+        if (not isDirectory(pDirent->d_name)) {
+            fileDescrip description;
 
-        strm.close();
+            description.fileName = pathSoFar + pDirent->d_name;
+            description.type = getType(pDirent->d_name);
 
-        if (strm.is_open()) {
-            std::cout << "ERRO: ARQUIVO AINDA ABERTO" << std::endl;
+            filesVector.push_back(description);
         }
+
+        
     }
 
-    // Close directory and exit.
     closedir(pDir);
-    return EXIT_SUCCESS;
+}
 
 
+/*
+std::vector<fileDescrip> countLines (std::vector<fileDescrip> files) {
+    
 }
 */
+
+
 
 inline bool fName_sorter(fileDescrip F1, fileDescrip F2) {  
     return F1.fileName < F2.fileName;
@@ -134,10 +162,10 @@ inline bool fAll_sorter(fileDescrip F1, fileDescrip F2){
 }
 
 
-std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts order){
+std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts ordering){
     
     // Process parameters
-    switch(orderBy){
+    switch(ordering.order){
         case apparition:
         break;
         case fileName:
@@ -161,6 +189,9 @@ std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts order
     }
     return files;
 }
+
+
+
 
 }
 

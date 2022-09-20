@@ -6,7 +6,8 @@
 namespace sloc {
 
 enum fileExt {
-    CPP = 0,
+    notSupported = 0,
+    CPP,
     HPP,
     C,
     H,
@@ -33,7 +34,7 @@ struct runOpts {
 
 struct fileDescrip {
     std::string fileName = "";
-    fileExt type = CPP;
+    fileExt type = notSupported;
     unsigned int blank = 0;
     unsigned int code = 0;
     unsigned int comments = 0;
@@ -61,7 +62,8 @@ inline bool fAll_sorter(fileDescrip F1, fileDescrip F2);
 runOpts getRunOpts (int argc, char *argv[]);
 
 // Go through files (recursevely or not) and get their info
-std::vector<fileDescrip> getFiles (std::string directory, runOpts is_rec);
+void getFiles (std::vector<fileDescrip> &filesVector, 
+std::string directory, runOpts is_rec, std::string pathSoFar);
 
 // Count lines
 std::vector<fileDescrip> countLines (std::vector<fileDescrip> files);
