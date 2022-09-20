@@ -49,7 +49,7 @@ namespace sloc {
     } 
 
 
-
+/*
 std::vector<fileDescrip> getFiles (std::string directory, runOpts is_rec) {
 
     struct dirent *pDirent;
@@ -112,7 +112,7 @@ std::vector<fileDescrip> getFiles (std::string directory, runOpts is_rec) {
 
 
 }
-
+*/
 
 inline bool fName_sorter(fileDescrip F1, fileDescrip F2) {  
     return F1.fileName < F2.fileName;
