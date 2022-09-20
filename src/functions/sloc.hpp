@@ -40,16 +40,22 @@ struct fileDescrip {
 };
 
 // Sort Method of Files Names
-bool fName_sorter(fileDescrip const& F1, fileDescrip const& F2);
+inline bool fName_sorter(fileDescrip F1, fileDescrip F2);
 
 // Sort Method of Files Comments
-bool fComments_sorter(fileDescrip const& F1, fileDescrip const& F2);
+inline bool fComments_sorter(fileDescrip F1, fileDescrip F2);
 
 // Sort Method of Files Blank Lines
-bool fBLines_sorter(fileDescrip const& F1, fileDescrip const& F2);
+inline bool fBLines_sorter(fileDescrip F1, fileDescrip F2);
 
 // Sort Method of Files Types
-bool fType_sorter(fileDescrip const& F1, fileDescrip const& F2);
+inline bool fType_sorter(fileDescrip F1, fileDescrip F2);
+
+//Sort Method of Code Lines
+inline bool fSloc_sorter(fileDescrip F1, fileDescrip F2);
+
+//Sort Method of Sum of all Lines
+inline bool fAll_sorter(fileDescrip F1, fileDescrip F2);
 
 // Save running options given by command line args
 runOpts getRunOpts (int argc, char *argv[]);

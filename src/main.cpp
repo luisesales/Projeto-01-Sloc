@@ -2,7 +2,7 @@
 #include <iostream>
 #include <dirent.h>
 #include <fstream>
-#include "sloc.hpp"
+#include "functions/sloc.hpp"
 #include <vector>
 
 int main(int argc, char *argv[]) {
