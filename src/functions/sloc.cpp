@@ -137,12 +137,39 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
 
 fileDescrip countLines (struct dirent pDirent) {
     std::string line;
-    fileDescrip file;
-    while(std::getline(pDirent,line)){
-        if(line.find("//") != line.end()){
-            file.comments++;
+    fileDescrip file{"",notSupported,0,0,0};
+    bool cMode{false};
+    while(std::getline(pDirent,line)){        
+        std::size_t found = line.find("/*");
+        if(found != std::string::npos && !cMode){
+            if(found > 0){
+                file.code++;
+            }
+            cMode = true;
         }
-        else if(){}
+        if(cMode){
+            file.comments++;
+            found = line.find("*/")
+            if(found != std::string::npos){
+                cMode = false;
+            }
+        }
+        else{ 
+            found = line.find("//");
+            if(found != std::string::npos){
+                file.comments++;
+                 if(found > 0){
+                    file.code++;
+                 }
+            }
+            else if(line.size() > 0){
+                file.code++;
+            }
+            else{
+                file.blank++;
+            }   
+        }
+         
     }
     return file;
 }

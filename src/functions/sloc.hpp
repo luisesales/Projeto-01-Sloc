@@ -40,6 +40,13 @@ struct fileDescrip {
     unsigned int comments = 0;
 };
 
+// Go through files (recursevely or not) and get their info
+void getFiles (std::vector<fileDescrip> &filesVector, 
+std::string directory, runOpts is_rec, std::string pathSoFar);
+
+// Count lines
+fileDescrip countLines (struct dirent pDirent);
+
 // Sort Method of Files Names
 inline bool fName_sorter(fileDescrip F1, fileDescrip F2);
 
@@ -60,13 +67,6 @@ inline bool fAll_sorter(fileDescrip F1, fileDescrip F2);
 
 // Save running options given by command line args
 runOpts getRunOpts (int argc, char *argv[]);
-
-// Go through files (recursevely or not) and get their info
-void getFiles (std::vector<fileDescrip> &filesVector, 
-std::string directory, runOpts is_rec, std::string pathSoFar);
-
-// Count lines
-fileDescrip countLines (struct dirent pDirent);
 
 // Sort files
 std::vector<fileDescrip> sortFiles (std::vector<fileDescrip> files, runOpts order);
