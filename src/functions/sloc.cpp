@@ -98,7 +98,7 @@ std::string convertToString(char* a, int size)
 }
 
 void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts is_rec, std::string pathSoFar) {
-
+    std::string line;
     struct dirent *pDirent;
     DIR *pDir;
 
@@ -120,7 +120,7 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
 
         if (not isDirectory(pDirent->d_name)) {
             fileDescrip description;
-
+            description = countLines(pDirent);
             description.fileName = pathSoFar + pDirent->d_name;
             description.type = getType(pDirent->d_name);
 
@@ -134,11 +134,19 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
 }
 
 
-/*
-std::vector<fileDescrip> countLines (std::vector<fileDescrip> files) {
-    
+
+fileDescrip countLines (struct dirent pDirent) {
+    std::string line;
+    fileDescrip file;
+    while(std::getline(pDirent,line)){
+        if(line.find("//") != line.end()){
+            file.comments++;
+        }
+        else if(){}
+    }
+    return file;
 }
-*/
+
 
 
 

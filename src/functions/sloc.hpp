@@ -66,7 +66,7 @@ void getFiles (std::vector<fileDescrip> &filesVector,
 std::string directory, runOpts is_rec, std::string pathSoFar);
 
 // Count lines
-std::vector<fileDescrip> countLines (std::vector<fileDescrip> files);
+fileDescrip countLines (struct dirent pDirent);
 
 // Sort files
 std::vector<fileDescrip> sortFiles (std::vector<fileDescrip> files, runOpts order);
