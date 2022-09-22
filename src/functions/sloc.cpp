@@ -219,7 +219,7 @@ std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts order
         std::sort(files.begin(), files.end(), fName_sorter);
         break;
 
-        // Order Alphabetically by File Types with not supported being the first ones
+        // Order Alphabetically by File Types
         case fileType:
         std::sort(files.begin(), files.end(), fType_sorter);
         break;
