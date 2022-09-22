@@ -6,11 +6,11 @@
 namespace sloc {
 
 enum fileExt {
-    notSupported = 0,
-    CPP,
+    CPP = 0,
     HPP,
     C,
     H,
+    notSupported,
 };
 
 
