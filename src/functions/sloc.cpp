@@ -139,7 +139,9 @@ fileDescrip countLines (struct dirent pDirent) {
     std::string line;
     fileDescrip file{"",notSupported,0,0,0};
     bool cMode{false};
-    while(std::getline(pDirent,line)){        
+    while(std::getline(pDirent,line)){  // Loops for each line in the file 
+        
+        // Ensure the Line is on Comment Mode
         std::size_t found = line.find("/*");
         if(found != std::string::npos && !cMode){
             if(found > 0){
@@ -154,7 +156,11 @@ fileDescrip countLines (struct dirent pDirent) {
                 cMode = false;
             }
         }
+
+ 
         else{ 
+
+            // Look if there's line comments
             found = line.find("//");
             if(found != std::string::npos){
                 file.comments++;
@@ -162,9 +168,13 @@ fileDescrip countLines (struct dirent pDirent) {
                     file.code++;
                  }
             }
+
+            // If there's no comments and the size is greater than 0, then there's code
             else if(line.size() > 0){
                 file.code++;
             }
+
+            // If the size is 0 and it's not in comment mode, then it is a blank line
             else{
                 file.blank++;
             }   
@@ -177,22 +187,22 @@ fileDescrip countLines (struct dirent pDirent) {
 
 
 
-inline bool fName_sorter(fileDescrip F1, fileDescrip F2) {  
+inline bool fName_sorter(const fileDescrip& F1, const fileDescrip& F2) {  
     return F1.fileName < F2.fileName;
 }
-inline bool fComments_sorter(fileDescrip F1, fileDescrip F2){
+inline bool fComments_sorter(const fileDescrip& F1, const fileDescrip& F2){
     return F1.comments < F2.comments;
 }
-inline bool fBLines_sorter(fileDescrip  F1, fileDescrip F2){
+inline bool fBLines_sorter(const fileDescrip& F1, const fileDescrip& F2){
     return F1.blank < F2.blank;
 }
-inline bool fType_sorter(fileDescrip F1, fileDescrip F2){
+inline bool fType_sorter(const fileDescrip& F1, const fileDescrip& F2){
     return F1.type < F2.type;
 }
-inline bool fSloc_sorter(fileDescrip F1, fileDescrip F2){
+inline bool fSloc_sorter(const fileDescrip& F1, const fileDescrip& F2){
     return F1.code < F2.code;
 }
-inline bool fAll_sorter(fileDescrip F1, fileDescrip F2){
+inline bool fAll_sorter(const fileDescrip& F1, const fileDescrip& F2){
     return (F1.code+F1.blank+F1.comments) < (F2.code+F2.blank+F2.comments);
 }
 
@@ -203,21 +213,33 @@ std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts order
     switch(ordering.order){
         case apparition:
         break;
+
+        // Order Alphabetically by File Names
         case fileName:
         std::sort(files.begin(), files.end(), fName_sorter);
         break;
+
+        // Order Alphabetically by File Types with not supported being the first ones
         case fileType:
         std::sort(files.begin(), files.end(), fType_sorter);
         break;
+
+        // Order by the numbers of comments of each file from lowest to greatest
         case comments:
         std::sort(files.begin(), files.end(), fComments_sorter);
         break;
+
+        // Order by the numbers of blank lines of each file from lowest to greatest
         case blankLines:
         std::sort(files.begin(), files.end(), fBLines_sorter);
         break;
+
+        // Order by the numbers of code lines of each file from lowest to greatest
         case sloc:
         std::sort(files.begin(), files.end(), fSloc_sorter);
         break;
+
+        // Order by the numbers of total lines of each file from lowest to greatest
         case all:
         std::sort(files.begin(), files.end(), fAll_sorter);
         break;
