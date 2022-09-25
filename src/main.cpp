@@ -19,7 +19,18 @@ int main(int argc, char *argv[]) {
     std::string path = "";
     sloc::getFiles(files, argv[1], runningOpts, path);
 
-    //files = countFiles(files);
+    for (int i = 0; i < files.size(); i++) {
+
+        if (files[i].type != sloc::notSupported) {
+            std::cout << "Nome: " << files[i].fileName << std::endl;
+            std::cout << "Tipo: " << files[i].type << std::endl;
+            //std::cout << "Linhas de cód: " << files[i].code << std::endl;
+            //std::cout << "linhas de comentário: " << files[i].comments << std::endl;
+            //std::cout << "Linhas em branco: " << files[i].blank<< std::endl;
+            std::cout << std::endl;
+        }
+
+    }
 
     //files = sortFiles(files, runningOptions);
 

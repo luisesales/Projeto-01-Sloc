@@ -42,7 +42,7 @@ struct fileDescrip {
 
 // Go through files (recursevely or not) and get their info
 void getFiles (std::vector<fileDescrip> &filesVector, 
-std::string directory, runOpts is_rec, std::string pathSoFar);
+char * directory, runOpts is_rec, std::string pathSoFar);
 
 // Count lines
 fileDescrip countLines (struct dirent pDirent);

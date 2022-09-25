@@ -3,10 +3,12 @@
 #include "sloc.hpp"
 #include <cstring>
 #include <bits/stdc++.h>
+#include <string>
+#include <fstream>
 
 namespace sloc {
 
-    runOpts getRunOpts (int argc, char *argv[]) {
+runOpts getRunOpts (int argc, char *argv[]) {
     
         runOpts options;
 
@@ -61,41 +63,46 @@ bool isDirectory (std::string name) {
     return true;
 }
 
+
 fileExt getType(std::string fileName) {
-    int size = fileName.length();
-    auto it = fileName.rbegin();
-    if (size > 2) {
-        if (*(it + 1) == '.') {
-            if (*it == 'h') {
-                return H;
-            } else if (*it == 'c') {
-                return C;
-            }
-        }
-        else if (*(it + 3) == '.') {
-            if (*it == 'p' and *(it + 1) == 'p' and *(it + 2) == 'c') {
-                return CPP;
-            } else if (*it == 'p' and *(it + 1) == 'p' and *(it + 2) == 'h') {
-                return HPP;
-            }
+    auto pos = fileName.find('.');
+    if (pos != std::string::npos) {
+
+        if (fileName[pos + 1] == 'c' and fileName[pos + 2] == '\0') {
+            return C;
+
+        } else if (fileName[pos + 1] == 'h' and fileName[pos + 2] == '\0') {
+            return H;
+
+        } else if (fileName[pos + 1] == 'c' and fileName[pos + 2] == 'p' and fileName[pos + 3] == 'p') {
+            return CPP;
+
+        } else if (fileName[pos + 1] == 'h' and fileName[pos + 2] == 'p' and fileName[pos + 3] == 'p') {
+            return HPP;
+
+        } else {
+            return notSupported;
+
         }
     }
 
-    return notSupported;
+    else return notSupported;
 }
+
 
 std::string convertToString(char* a, int size)
 {
     int i;
     std::string s = "";
     for (i = 0; i < size; i++) {
-        if (a[i] == '\n') {
-            break;
+        if (a[i] == '\0') {
+            return s;
         }
         s = s + a[i];
     }
     return s;
 }
+
 
 void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts is_rec, std::string pathSoFar) {
     std::string line;
@@ -111,19 +118,20 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
     // Process each entry.
     while ((pDirent = readdir(pDir)) != NULL) {
 
-        if (isDirectory(pDirent->d_name) && is_rec.recursive) {
+        std::string name = convertToString((pDirent->d_name), 256);
 
-            std::string name = convertToString((pDirent->d_name), 256);
+        if (isDirectory(pathSoFar + "/" + name) && is_rec.recursive) {
 
             getFiles(filesVector, (pDirent->d_name), is_rec, (pathSoFar + "/" + name));
         }
 
-        if (not isDirectory(pDirent->d_name)) {
+        if (not isDirectory(name)) {
             fileDescrip description;
-            description = countLines(pDirent);
-            description.fileName = pathSoFar + pDirent->d_name;
-            description.type = getType(pDirent->d_name);
 
+            //description = countLines(pDirent);
+            description.fileName = pathSoFar + name;
+            description.type = getType(name);
+            
             filesVector.push_back(description);
         }
 
@@ -133,56 +141,55 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
     closedir(pDir);
 }
 
-
-
-fileDescrip countLines (struct dirent pDirent) {
-    std::string line;
-    fileDescrip file{"",notSupported,0,0,0};
-    bool cMode{false};
-    while(std::getline(pDirent,line)){  // Loops for each line in the file 
+// fileDescrip countLines (struct dirent pDirent) {
+//     std::string line;
+//     fileDescrip file{"",notSupported,0,0,0};
+//     bool cMode{false};
+//     while(std::getline(pDirent,line)){  // Loops for each line in the file 
         
-        // Ensure the Line is on Comment Mode
-        std::size_t found = line.find("/*");
-        if(found != std::string::npos && !cMode){
-            if(found > 0){
-                file.code++;
-            }
-            cMode = true;
-        }
-        if(cMode){
-            file.comments++;
-            found = line.find("*/")
-            if(found != std::string::npos){
-                cMode = false;
-            }
-        }
+//         // Ensure the Line is on Comment Mode
+//         std::size_t found = line.find("/*");
+//         if(found != std::string::npos && !cMode){
+//             if(found > 0){
+//                 file.code++;
+//             }
+//             cMode = true;
+//         }
+//         if(cMode){
+//             file.comments++;
+//             found = line.find("*/");
+//             if(found != std::string::npos){
+//                 cMode = false;
+//             }
+//         }
 
  
-        else{ 
+//         else{ 
 
-            // Look if there's line comments
-            found = line.find("//");
-            if(found != std::string::npos){
-                file.comments++;
-                 if(found > 0){
-                    file.code++;
-                 }
-            }
+//             // Look if there's line comments
+//             found = line.find("//");
+//             if(found != std::string::npos){
+//                 file.comments++;
+//                  if(found > 0){
+//                     file.code++;
+//                  }
+//             }
 
-            // If there's no comments and the size is greater than 0, then there's code
-            else if(line.size() > 0){
-                file.code++;
-            }
+//             // If there's no comments and the size is greater than 0, then there's code
+//             else if(line.size() > 0){
+//                 file.code++;
+//             }
 
-            // If the size is 0 and it's not in comment mode, then it is a blank line
-            else{
-                file.blank++;
-            }   
-        }
+//             // If the size is 0 and it's not in comment mode, then it is a blank line
+//             else{
+//                 file.blank++;
+//             }   
+//         }
          
-    }
-    return file;
-}
+//     }
+//     return file;
+// }
+
 
 
 
@@ -206,7 +213,7 @@ inline bool fAll_sorter(const fileDescrip& F1, const fileDescrip& F2){
     return (F1.code+F1.blank+F1.comments) < (F2.code+F2.blank+F2.comments);
 }
 
-
+/*
 std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts ordering){
     
     // Process parameters
@@ -246,7 +253,7 @@ std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts order
     }
     return files;
 }
-
+*/
 
 
 
