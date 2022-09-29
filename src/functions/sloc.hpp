@@ -78,6 +78,6 @@ void printResult (std::vector<fileDescrip> sortedFiles);
 //Outputs the help commands on the console
 void printHelp();
 
-float porcentCalc(unsigned short target, unsigned short total);
+float porcentageCalc(unsigned short target, unsigned short total);
 
 }
