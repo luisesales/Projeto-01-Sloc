@@ -127,10 +127,12 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
 
         if (not isDirectory(name)) {
             fileDescrip description;
-
-            description = countLines(pDirent);
+            fileExt t = getType(name);
+            if(t != notSupported){
+                description = countLines(pDirent);
+            }
             description.fileName = pathSoFar + name;
-            description.type = getType(name);
+            description.type = t;
             
             filesVector.push_back(description);
         }
