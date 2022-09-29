@@ -38,6 +38,7 @@ struct fileDescrip {
     unsigned int blank = 0;
     unsigned int code = 0;
     unsigned int comments = 0;
+    unsigned int total = 0;
 };
 
 // Go through files (recursevely or not) and get their info
@@ -48,22 +49,22 @@ char * directory, runOpts is_rec, std::string pathSoFar);
 fileDescrip countLines (struct dirent pDirent);
 
 // Sort Method of Files Names
-inline bool fName_sorter(fileDescrip F1, fileDescrip F2);
+inline bool fName_sorter(const fileDescrip& F1, const fileDescrip& F2);
 
 // Sort Method of Files Comments
-inline bool fComments_sorter(fileDescrip F1, fileDescrip F2);
+inline bool fComments_sorter(const fileDescrip& F1, const fileDescrip& F2);
 
 // Sort Method of Files Blank Lines
-inline bool fBLines_sorter(fileDescrip F1, fileDescrip F2);
+inline bool fBLines_sorter(const fileDescrip& F1, const fileDescrip& F2);
 
 // Sort Method of Files Types
-inline bool fType_sorter(fileDescrip F1, fileDescrip F2);
+inline bool fType_sorter(const fileDescrip& F1, const fileDescrip& F2);
 
 //Sort Method of Code Lines
-inline bool fSloc_sorter(fileDescrip F1, fileDescrip F2);
+inline bool fSloc_sorter(const fileDescrip& F1, const fileDescrip& F2);
 
 //Sort Method of Sum of all Lines
-inline bool fAll_sorter(fileDescrip F1, fileDescrip F2);
+inline bool fAll_sorter(const fileDescrip& F1, const fileDescrip& F2);
 
 // Save running options given by command line args
 runOpts getRunOpts (int argc, char *argv[]);

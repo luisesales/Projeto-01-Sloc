@@ -128,7 +128,7 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
         if (not isDirectory(name)) {
             fileDescrip description;
 
-            //description = countLines(pDirent);
+            description = countLines(pDirent);
             description.fileName = pathSoFar + name;
             description.type = getType(name);
             
@@ -141,54 +141,54 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
     closedir(pDir);
 }
 
-// fileDescrip countLines (struct dirent pDirent) {
-//     std::string line;
-//     fileDescrip file{"",notSupported,0,0,0};
-//     bool cMode{false};
-//     while(std::getline(pDirent,line)){  // Loops for each line in the file 
+ fileDescrip countLines (struct dirent pDirent) {
+     std::string line;
+     fileDescrip file{"",notSupported,0,0,0};
+     bool cMode{false};
+     while(std::getline(pDirent,line)){  // Loops for each line in the file 
         
-//         // Ensure the Line is on Comment Mode
-//         std::size_t found = line.find("/*");
-//         if(found != std::string::npos && !cMode){
-//             if(found > 0){
-//                 file.code++;
-//             }
-//             cMode = true;
-//         }
-//         if(cMode){
-//             file.comments++;
-//             found = line.find("*/");
-//             if(found != std::string::npos){
-//                 cMode = false;
-//             }
-//         }
+         // Ensure the Line is on Comment Mode
+         std::size_t found = line.find("/*");
+         if(found != std::string::npos && !cMode){
+             if(found > 0){
+                 file.code++;
+             }
+             cMode = true;
+         }
+         if(cMode){
+             file.comments++;
+             found = line.find("*/");
+             if(found != std::string::npos){
+                 cMode = false;
+             }
+         }
 
  
-//         else{ 
+         else{ 
 
-//             // Look if there's line comments
-//             found = line.find("//");
-//             if(found != std::string::npos){
-//                 file.comments++;
-//                  if(found > 0){
-//                     file.code++;
-//                  }
-//             }
+             // Look if there's line comments
+             found = line.find("//");
+             if(found != std::string::npos){
+                 file.comments++;
+                  if(found > 0){
+                     file.code++;
+                  }
+             }
 
-//             // If there's no comments and the size is greater than 0, then there's code
-//             else if(line.size() > 0){
-//                 file.code++;
-//             }
+             // If there's no comments and the size is greater than 0, then there's code
+             else if(line.size() > 0){
+                 file.code++;
+             }
 
-//             // If the size is 0 and it's not in comment mode, then it is a blank line
-//             else{
-//                 file.blank++;
-//             }   
-//         }
-         
-//     }
-//     return file;
-// }
+             // If the size is 0 and it's not in comment mode, then it is a blank line
+             else{
+                 file.blank++;
+             }   
+         }
+        
+     }
+     return file;
+ }
 
 
 
@@ -210,10 +210,10 @@ inline bool fSloc_sorter(const fileDescrip& F1, const fileDescrip& F2){
     return F1.code < F2.code;
 }
 inline bool fAll_sorter(const fileDescrip& F1, const fileDescrip& F2){
-    return (F1.code+F1.blank+F1.comments) < (F2.code+F2.blank+F2.comments);
+    return F1.total < F2.total;
 }
 
-/*
+
 std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts ordering){
     
     // Process parameters
@@ -223,37 +223,37 @@ std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts order
 
         // Order Alphabetically by File Names
         case fileName:
-        std::sort(files.begin(), files.end(), fName_sorter);
+        std::sort(files.begin(), files.end(), &fName_sorter);
         break;
 
         // Order Alphabetically by File Types
         case fileType:
-        std::sort(files.begin(), files.end(), fType_sorter);
+        std::sort(files.begin(), files.end(), &fType_sorter);
         break;
 
         // Order by the numbers of comments of each file from lowest to greatest
         case comments:
-        std::sort(files.begin(), files.end(), fComments_sorter);
+        std::sort(files.begin(), files.end(), &fComments_sorter);
         break;
 
         // Order by the numbers of blank lines of each file from lowest to greatest
         case blankLines:
-        std::sort(files.begin(), files.end(), fBLines_sorter);
+        std::sort(files.begin(), files.end(), &fBLines_sorter);
         break;
 
         // Order by the numbers of code lines of each file from lowest to greatest
         case sloc:
-        std::sort(files.begin(), files.end(), fSloc_sorter);
+        std::sort(files.begin(), files.end(), &fSloc_sorter);
         break;
 
         // Order by the numbers of total lines of each file from lowest to greatest
         case all:
-        std::sort(files.begin(), files.end(), fAll_sorter);
+        std::sort(files.begin(), files.end(), &fAll_sorter);
         break;
     }
     return files;
 }
-*/
+
 
 void printResult (std::vector<sloc::fileDescrip> sortedFiles) {
     std::vector<unsigned short> columns;
