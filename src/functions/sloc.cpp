@@ -383,7 +383,6 @@ void printResult (std::vector<sloc::fileDescrip> sortedFiles) {
 
 
 
-
 }
 
     
