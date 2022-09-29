@@ -35,11 +35,12 @@ Preencha os itens que você implementou, indicando qual a nota esperada para cad
 | Show the type of source file                        |      5       |       ??       |
 | Show percentages as requested                       |      10      |       ??       |
 | Show consolidation at the bottom of a table         |      5       |       ??       |
-| Table is formatted as requested                     |      8       |        6       |
+| Table is formatted as requested                     |      8       |        4       |
 | The project contains at least one struct or classes |      5       |        5       |
 
 # Compiling and Runnig
 
 <!-- TODO -->
-
-g++ -o <nome do executável> main.cpp functions/sloc.cpp
+1º Entrar na pasta do projeto
+2º Digitar a Seguinte Linha de Comando
+"g++ -o <nome do executável> src/main.cpp src/functions/sloc.cpp"

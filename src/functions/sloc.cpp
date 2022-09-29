@@ -382,8 +382,24 @@ void printResult (std::vector<sloc::fileDescrip> sortedFiles) {
 
 }
 
+void printHelp(){
+        std::cout << "Usage syntax: sloc [options] <dirname>" << std::endl;
+        std::cout << std::endl;
+        std::cout << "Options:" << std::endl;
+        std::cout << std::endl;
+        std::cout << "-h/--help       Print this screen. (Ignored if any other commands are used)" << std::endl;
+        std::cout << "-r              Search for file recursively within the provided directory." << std::endl;
+        std::cout << "-s f/t/c/b/s/a  Order the resulting table in an ascending manner by: (f) file name, (t) file type, (c) commentary count," << std::endl;
+        std::cout << "                (b) blank line count, (s) code line count or (a) all." << std::endl;
+        std::cout << "-S f/t/c/b/s/a  Same as above, but in descending order." << std::endl;
+}
 
+float porcentageCalc(unsigned short target, unsigned short total){
+    float tar = (float) target;
+    float tot = (float) total;
 
+    return tot*100/tar;
+}
 
 }
 

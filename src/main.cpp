@@ -11,7 +11,12 @@ int main(int argc, char *argv[]) {
         std::cout << "Usage: " << argv[0] << " <dirname>\n";
         return EXIT_FAILURE;
     }
-    
+    else if(argv[1] == "-h" || argv[1] == "--help"){
+        {
+            sloc::printHelp();
+            return EXIT_FAILURE;
+        }
+    }
     std::vector<sloc::fileDescrip> files;
 
     sloc::runOpts runningOpts = sloc::getRunOpts(argc, argv);    
@@ -30,7 +35,7 @@ int main(int argc, char *argv[]) {
             std::cout << std::endl;
         }
 
-    }
+    
 
     //files = sortFiles(files, runningOptions);
 
@@ -38,4 +43,5 @@ int main(int argc, char *argv[]) {
 
 
     return EXIT_SUCCESS;
+    }
 }

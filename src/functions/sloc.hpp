@@ -75,5 +75,9 @@ std::vector<fileDescrip> sortFiles (std::vector<fileDescrip> files, runOpts orde
 // Outputs result on the console
 void printResult (std::vector<fileDescrip> sortedFiles);
 
+//Outputs the help commands on the console
+void printHelp();
+
+float porcentCalc(unsigned short target, unsigned short total);
 
 }
