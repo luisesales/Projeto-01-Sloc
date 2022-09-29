@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 
     sloc::runOpts runningOpts = sloc::getRunOpts(argc, argv);    
 
-    std::string path = "";
+    std::string path = "./";
     sloc::getFiles(files, argv[1], runningOpts, path);
 
     for (int i = 0; i < files.size(); i++) {

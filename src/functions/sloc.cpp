@@ -255,6 +255,133 @@ std::vector<fileDescrip> sortFiles(std::vector<fileDescrip> files, runOpts order
 }
 */
 
+void printResult (std::vector<sloc::fileDescrip> sortedFiles) {
+    std::vector<unsigned short> columns;
+    unsigned short columnIt{0};
+
+    unsigned short consoleLen = 100;
+    unsigned short filesProcessed = sortedFiles.size();
+
+    unsigned short fileNameMax{0};
+    for (auto i = 0; i < filesProcessed; i++) {
+        if (sortedFiles[i].fileName.length() > fileNameMax) {
+            fileNameMax = sortedFiles[i].fileName.length();
+        }
+    }
+
+    std::string c_cpp_header = "C/C++ header";
+
+    std::cout << "Files processed: " << filesProcessed << std::endl;
+
+    for (auto i = 0; i < consoleLen; i++) {
+        std::cout << "-";
+    }
+    std::cout << std::endl;
+
+
+    std::cout << "Filename";
+    columnIt += 9;
+
+    for (auto i = columnIt; i < fileNameMax + 8; i++) {
+        std::cout << " ";
+    }
+    columnIt += fileNameMax - 1;
+
+    columns.push_back(columnIt);
+    std::cout << "Language";
+    columnIt += 9;
+
+    for (auto i = 0; i < 8; i++) {
+        std::cout << " ";
+    }
+    columnIt += 8;
+
+    columns.push_back(columnIt);
+    std::cout << "Comments";
+    columnIt += 9;
+
+    for (auto i = 0; i < 10; i++) {
+        std::cout << " ";
+    }
+    columnIt += 10;
+
+    columns.push_back(columnIt);
+    std::cout << "Blank";
+    columnIt += 6;
+
+    for (auto i = 0; i < 12; i++) {
+        std::cout << " ";
+    }
+    columnIt += 12;
+
+    columns.push_back(columnIt);   
+    std::cout << "Code";
+    columnIt += 4;
+
+    for (auto i = 0; i < 14; i++) {
+        std::cout << " ";
+    }
+    columnIt += 14;
+
+    columns.push_back(columnIt);   
+    std::cout << "All";
+    columnIt += 3;
+
+    for (auto i = columnIt; i < 80; i++) {
+        std::cout << " ";
+    }
+    std::cout << std::endl;
+
+    for (auto i = 0; i < consoleLen; i++) {
+        std::cout << "-";
+    }
+    std::cout << std::endl;
+
+
+    unsigned short commentsSum{0};
+    unsigned short blankSum{0};
+    unsigned short codeSum{0};
+    unsigned short allSum{0};
+
+    columnIt = 0;
+    for (int i = 0; i < filesProcessed; i++) {
+        std::cout << sortedFiles[i].fileName;
+        columnIt += sortedFiles[i].fileName.length();
+        for (int j = columnIt; j < columns[0]; j++) {
+            std::cout << " ";
+        }
+
+        switch (sortedFiles[i].type)
+        {
+        case sloc::CPP:
+            std::cout << "C++";
+            break;
+
+        case sloc::C:
+            std::cout << "C";
+            break;
+
+        case sloc::HPP:
+            std::cout << c_cpp_header;
+            break;    
+
+        case sloc::H:
+            std::cout << c_cpp_header;
+            break;      
+
+        default:
+            break;
+        }
+
+
+
+    }
+
+
+}
+
+
+
 
 
 }
