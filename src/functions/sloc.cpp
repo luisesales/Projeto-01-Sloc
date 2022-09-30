@@ -50,16 +50,32 @@ runOpts getRunOpts (int argc, char *argv[]) {
 
     } 
 
-
-bool isDirectory (std::string name) {
-    int size = name.length();
-    auto it = name.rbegin();
-    if (size > 2) {
-        if (*(it + 1) == '.' or *(it + 2) == '.' or *(it + 3) == '.') {
-            return false;
+std::string convertToString(char* a, int size)
+{
+    int i;
+    std::string s = "";
+    for (i = 0; i < size; i++) {
+        if (a[i] == '\0') {
+            return s;
         }
+        s = s + a[i];
     }
-    
+    return s;
+}
+
+
+
+
+bool isDirectory (char *name) {
+    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) {
+        return true;
+    }
+
+    std::string strName = convertToString(name, 256);
+    if (strName.find(".") != std::string::npos) {
+        return false;
+    }
+
     return true;
 }
 
@@ -90,18 +106,6 @@ fileExt getType(std::string fileName) {
 }
 
 
-std::string convertToString(char* a, int size)
-{
-    int i;
-    std::string s = "";
-    for (i = 0; i < size; i++) {
-        if (a[i] == '\0') {
-            return s;
-        }
-        s = s + a[i];
-    }
-    return s;
-}
 
 
 void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts is_rec, std::string pathSoFar) {
@@ -112,7 +116,7 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
     // Ensure we can open directory.
     pDir = opendir(directory);
     if (pDir == NULL) {
-        std::cout << "Cannot open directory '" << directory << "'\n";
+        std::cout << "Cannot open directory " << directory << "\n";
     }
 
     // Process each entry.
@@ -120,34 +124,53 @@ void getFiles (std::vector<fileDescrip> &filesVector, char *directory, runOpts i
 
         std::string name = convertToString((pDirent->d_name), 256);
 
-        if (isDirectory(pathSoFar + "/" + name) && is_rec.recursive) {
+        //std::cout << name << std::endl;
 
+        if (isDirectory(pDirent->d_name) && is_rec.recursive && strcmp(pDirent->d_name, ".") != 0 && strcmp(pDirent->d_name, "..") != 0) {
+
+            //std::cout << "CHAMADA RECURSIVA" << std::endl;
             getFiles(filesVector, (pDirent->d_name), is_rec, (pathSoFar + "/" + name));
         }
 
-        if (not isDirectory(name)) {
+        if (!isDirectory(pDirent->d_name)) {
+
             fileDescrip description;
             fileExt t = getType(name);
-            if(t != notSupported){
-                description = countLines(pDirent);
-            }
-            description.fileName = pathSoFar + name;
-            description.type = t;
-            
-            filesVector.push_back(description);
-        }
 
+            if(t != notSupported){
+
+                description = countLines(*pDirent);
+
+                description.fileName = pathSoFar + name;
+                description.type = t;
+                
+                /*
+                std::cout << name << " is not directory" << std::endl;
+                std::cout << name << " type is: " << description.type << std::endl;
+                std::cout << name << " filename is: " << description.fileName << std::endl;
+                std::cout << name << " code count is: " << description.code << std::endl;
+                */
+
+                filesVector.emplace_back(description);
+            }            
+            
+        }
         
     }
 
     closedir(pDir);
 }
 
- fileDescrip countLines (struct dirent pDirent) {
+ fileDescrip countLines (struct dirent &pDirent) {
      std::string line;
      fileDescrip file{"",notSupported,0,0,0};
      bool cMode{false};
-     while(std::getline(pDirent,line)){  // Loops for each line in the file 
+
+     std::ifstream f (pDirent.d_name, std::ios::in); 
+
+     while(std::getline(f, line)){  // Loops for each line in the file 
+
+        std::cout << line << std::endl;
         
          // Ensure the Line is on Comment Mode
          std::size_t found = line.find("/*");
@@ -345,11 +368,30 @@ void printResult (std::vector<sloc::fileDescrip> sortedFiles) {
     unsigned short codeSum{0};
     unsigned short allSum{0};
 
-    columnIt = 0;
     for (int i = 0; i < filesProcessed; i++) {
+        commentsSum += sortedFiles[i].comments;
+        blankSum += sortedFiles[i].blank;
+        codeSum += sortedFiles[i].code;
+        allSum += sortedFiles[i].comments + sortedFiles[i].blank + sortedFiles[i].code;
+    }
+
+
+    for (int i = 0; i < filesProcessed; i++) {
+        
+        std::string numSize;
+
+        columnIt = 0;
+
+        float blankPercentage = porcentageCalc(sortedFiles[i].blank, sortedFiles[i].total);
+        float codePercentage = porcentageCalc(sortedFiles[i].code, sortedFiles[i].total);
+        float commentsPercentage = porcentageCalc(sortedFiles[i].comments, sortedFiles[i].total);
+
+        std::cout.precision(1);
+
         std::cout << sortedFiles[i].fileName;
         columnIt += sortedFiles[i].fileName.length();
-        for (int j = columnIt; j < columns[0]; j++) {
+
+        for (columnIt; columnIt < columns[0] - 1); columnIt++) {
             std::cout << " ";
         }
 
@@ -357,25 +399,63 @@ void printResult (std::vector<sloc::fileDescrip> sortedFiles) {
         {
         case sloc::CPP:
             std::cout << "C++";
+            columnIt += 3;
             break;
 
         case sloc::C:
             std::cout << "C";
+            columnIt += 1;
             break;
 
         case sloc::HPP:
             std::cout << c_cpp_header;
+            columnIt += c_cpp_header.length();
             break;    
 
         case sloc::H:
             std::cout << c_cpp_header;
+            columnIt += c_cpp_header.length();
             break;      
 
         default:
             break;
         }
 
+        
+        numSize = (std::string) sortedFiles[i].comments;
+        
 
+        for (columnIt; columnIt < columns[1] - 2 ; columnIt++) {
+            std::cout << " ";
+        }
+
+        std::cout << sortedFiles[i].comments;
+        std::cout << std::fixed << "(" << commentsPercentage << "%)";
+        columnIt += 6;
+
+        for (columnIt; columnIt < columns[2] - 4; columnIt++) {
+            std::cout << " ";
+        }
+
+        std::cout << sortedFiles[i].blank;
+        std::cout << std::fixed << "(" << blankPercentage << "%)";
+        columnIt += 6;
+
+        for (columnIt; columnIt < columns[3] - 6; columnIt++) {
+            std::cout << " ";
+        }
+
+
+        std::cout << sortedFiles[i].code;
+        std::cout << std::fixed << "(" << codePercentage << "%)";
+        columnIt += 6;
+
+        for (columnIt; columnIt < columns[4] - 7; columnIt++) {
+            std::cout << " ";
+        }
+
+        std::cout << sortedFiles[i].total <<  std::endl;
+        
 
     }
 
@@ -395,10 +475,15 @@ void printHelp(){
 }
 
 float porcentageCalc(unsigned short target, unsigned short total){
+
+    if (target == 0 || total == 0) {
+        return 0;
+    }
+
     float tar = (float) target;
     float tot = (float) total;
 
-    return tot*100/tar;
+    return (tot*100)/tar;
 }
 
 }
